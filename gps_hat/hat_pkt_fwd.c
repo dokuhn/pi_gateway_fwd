@@ -101,30 +101,30 @@ static int keepalive_time = DEFAULT_KEEPALIVE; /* send a PULL_DATA request every
 static char platform[16] = "GPSHAT";  /* platform definition */
 static char description[16] = "DESC";                        /* used for free form description */
 static char email[32]  = "support@dragino.com";                        /* used for contact email */
-static float lat = 0.0;
-static float lon = 0.0;
-static float alt = 0.0;
-static uint8_t rfsf = 7;
+static float lat = 49.29351903751598;
+static float lon = 6.907710396054431;
+static float alt = 325.0;
+static uint8_t rfsf = 12;
 static uint32_t rfbw = 125000;
 static uint8_t rfcr = 5;
 static uint8_t rfprlen = 8;
 static uint8_t rf_power = 16;            /* tx power of radio */
 static uint32_t rf_freq = 868100000;            /* rx frequency of radio */
-static uint8_t syncwd = 52;            /* tx frequency of radio */
+static uint8_t syncwd = 0x34;            /* tx frequency of radio */
 static uint8_t logdebug = 0;          /* debug info option */
 static char server_type[16] = "LoRaWAN";          /* debug info option */
 
 /* LOG Level */
-int DEBUG_PKT_FWD = 0;
+int DEBUG_PKT_FWD = 1;
 int DEBUG_JIT = 0;
 int DEBUG_JIT_ERROR = 0;  
 int DEBUG_TIMERSYNC = 0;  
 int DEBUG_BEACON = 0;     
 int DEBUG_INFO = 0;       
-int DEBUG_WARNING = 0;   
-int DEBUG_ERROR = 0;    
-int DEBUG_GPS = 0;     
-int DEBUG_SPI = 0;    
+int DEBUG_WARNING = 1;   
+int DEBUG_ERROR = 1;    
+int DEBUG_GPS = 1;     
+int DEBUG_SPI = 1;    
 
 /* values available for the 'modulation' parameters */
 /* NOTE: arbitrary values */
@@ -548,7 +548,7 @@ int main(int argc, char *argv[])
     struct timespec start_time; /* time of start radio receive */
     struct timespec end_time;  /* timeout of radio receive */
 
-    char *local_cfg_path = "/etc/lora-packet-forwarder/local_conf.json"; /* contain node specific configuration, overwrite global parameters for parameters that are defined in both */
+    char *local_cfg_path = "/opt/lora-packet-forwarder/local_conf.json"; /* contain node specific configuration, overwrite global parameters for parameters that are defined in both */
 
     /* load configuration files */
     if (access(local_cfg_path, R_OK) == 0) { /* if there is a local conf, parse the conf */
@@ -605,7 +605,9 @@ int main(int argc, char *argv[])
     rfdev->dio[0] = 4;
     rfdev->dio[1] = 0;
     rfdev->dio[2] = 0;
-    rfdev->spiport = lgw_spi_open(SPI_DEV_RX);   /* this is the spidev2.0 be to unity LG02 */
+    // wiringPiSetup();
+     //  rfdev->spiport = wiringPiSPISetup(0, 500000);
+    rfdev->spiport = lgw_spi_open(0);   /* this is the spidev2.0 be to unity LG02 */
     if (rfdev->spiport < 0) { 
         MSG_LOG(DEBUG_ERROR, "ERROR~ open spi_dev_tx error!\n");
         goto clean;
@@ -698,10 +700,10 @@ int main(int argc, char *argv[])
 
 	    start_time = end_time;
 
-            while ((digitalRead(rfdev->dio[1]) != 1) && ((int)difftimespec(end_time, start_time) < RXRF_TIMEOUT_S)) {  /* receive timeout, if no readdigital or readerror? */
+            while ((digitalRead(4) != 1) && ((int)difftimespec(end_time, start_time) < RXRF_TIMEOUT_S)) {  /* receive timeout, if no readdigital or readerror? */
             //while ((digitalRead(rfdev->dio[1]) != 1)) {  /* receive timeout, if no readdigital or readerror? */
 	        clock_gettime(CLOCK_MONOTONIC, &end_time);
-                if (digitalRead(rfdev->dio[0]) == 1) {
+                if (digitalRead(7) == 1) {
                     if (pktrx[pt].empty) {
                         if (received(rfdev->spiport, &pktrx[pt]) == true) {   /* received a valid message */
                             if (!strcmp(server_type, "mqtt") || !strcmp(server_type, "tcpudp") || !strcmp(server_type, "customized")) {  /* mqtt mode or tcpudp mode for loraRAW */

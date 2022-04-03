@@ -3,13 +3,13 @@
 all: hat_pkt_fwd dual_pkt_fwd single_rx_tx
 
 hat_pkt_fwd: base64.o parson.o radio.o jitqueue.o hat_pkt_fwd.o
-	$(CC) hat_pkt_fwd.o base64.o parson.o radio.o jitqueue.o -lm -lrt -ldl -lpthread -o hat_pkt_fwd
+	$(CC) hat_pkt_fwd.o base64.o parson.o radio.o jitqueue.o -lwiringPi -lm -lrt -ldl -lpthread -o hat_pkt_fwd
 
 dual_pkt_fwd: base64.o parson.o radio.o jitqueue.o dual_pkt_fwd.o
-	$(CC) dual_pkt_fwd.o base64.o parson.o radio.o jitqueue.o -lm -lrt -ldl -lpthread -o dual_pkt_fwd
+	$(CC) dual_pkt_fwd.o base64.o parson.o radio.o jitqueue.o -lwiringPi -lm -lrt -ldl -lpthread -o dual_pkt_fwd
 
 single_rx_tx: radio.o
-	$(CC) $(CFLAGS) radio.o -lrt -ldl single_rx_tx.c -o single_rx_tx
+	$(CC) $(CFLAGS) radio.o -lwiringPi -lrt -ldl single_rx_tx.c -o single_rx_tx
 
 
 hat_pkt_fwd.o: hat_pkt_fwd.c

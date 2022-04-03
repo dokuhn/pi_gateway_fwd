@@ -13,6 +13,10 @@
 #include <stdio.h>
 #include <stdbool.h>
 
+#include <wiringPi.h>
+#include <wiringPiSPI.h>
+
+
 #ifndef _RADIO_H
 #define _RADIO_H
 
@@ -299,13 +303,13 @@ void wait_us(unsigned long a);
  * @return GPIO_HIGH if the pin is HIGH, GPIO_LOW if the pin is low. Output
  * is -1 when an error occurred.
  */
-int digitalRead(int);
+// int digitalRead(int);
 
-void diditalWrite(int, int);
+// void diditalWrite(int, int);
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 /* SPI initialization and configuration */
-int lgw_spi_open(char *); 
+int lgw_spi_open(int channel); 
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 // Lora configure : Freq, SF, BW
