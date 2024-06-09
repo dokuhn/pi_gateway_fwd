@@ -23,6 +23,7 @@ Maintainer: Sylvain Miermont
 #include <stdint.h>     /* C99 types */
 #include <stdbool.h>    /* bool type */
 #include <stdio.h>      /* printf fprintf */
+#include <unistd.h>
 
 #include "loragw_spi.h"
 #include "loragw_reg.h"
@@ -638,6 +639,8 @@ int lgw_reg_check(FILE *f) {
 int lgw_reg_w(uint16_t register_id, int32_t reg_value) {
     int spi_stat = LGW_SPI_SUCCESS;
     struct lgw_reg_s r;
+
+    usleep(1);
 
     /* check input parameters */
     if (register_id >= LGW_TOTALREGS) {
